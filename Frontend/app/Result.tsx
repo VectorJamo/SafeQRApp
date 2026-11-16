@@ -15,9 +15,34 @@ export default function ResultScreen() {
         return;
       }
 
-      await Linking.openURL(parsed.toString());
+      // Before opening the URL, send it to the backend to check if it is malicious or not
+      const sendUrl = async () => {
+        try {
+            const response = await fetch("http://10.0.0.136:5000/checkurl", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                  {
+                    url: url
+                  }
+                )
+            });
+    
+            const result = await response.text();
+    
+            console.log(result);
+    
+          } catch (error) {
+            console.error("Request failed:", error);
+          }
+      };
+
+      sendUrl();
+
     } catch {
-      alert('Invalid URL or unable to open link.');
+      alert('Invalid URL.');
     }
   }
 
